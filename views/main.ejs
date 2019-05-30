@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Demo - Innovation Lab</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>Demo - Innovation Lab</h2>
+        <div class="panel panel-success">
+            <div class="panel-heading"><b>Pay To</b></div>
+            <div class="panel-body">
+                <form action="/postPayment" method="POST">
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" class="form-control" id="name" placeholder="Enter Name" name="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="amount">Amount:</label>
+                        <input type="text" class="form-control" id="amount" placeholder="Enter Amount" name="amount">
+                    </div>
+                    <div class="form-group">
+                        <label for="details">Details:</label>
+                        <textarea class="form-control" rows="2" id="details" placeholder="Enter Details" name="details"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </form>
+            </div>
+        </div>
+        <div class="panel panel-info">
+            <div class="panel-heading"><b>Payments</b></div>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Amount</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(var i=0; i<payments.length; i++) {%>
+                        <tr>
+                            <td><%=payments[i].name%></td>
+                            <td><%=payments[i].amount%></td>
+                            <td><%=payments[i].details%></td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+                <form action="/print" method="POST">
+                    <div class="pull-right"><button type ="submit" class="btn btn-primary">Print</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

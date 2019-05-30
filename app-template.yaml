@@ -1,0 +1,124 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: cash-front-app-template
+objects:
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      app: cash-front
+    name: cash-front
+  spec:
+    runPolicy: Serial
+    source:
+      git:
+        uri: https://github.com/jc-wkshp/cash-front
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: nodejs:8
+          namespace: openshift
+      type: Source
+    output:
+      to:
+        kind: ImageStreamTag
+        name: frontend:latest
+    triggers:
+    - type: GitHub
+      github:
+        secret: innov-demo-front-end
+    - type: ConfigChange
+    - type: ImageChange
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: cash-front
+    name: cash-front
+  spec:
+    replicas: 1
+    selector:
+      app: cash-front
+    strategy:
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          app: cash-front
+        name: cash-front
+      spec:
+        containers:
+        - image: cash-front:latest
+          imagePullPolicy: Always
+          name: cash-front
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m 
+              memory: 500Mi 
+            limits:
+              cpu: 200m 
+              memory: 1Gi 
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - cash-front
+        from:
+          kind: ImageStreamTag
+          name: cash-front:latest
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: cash-front
+    name: cash-front
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: cash-front
+    type: ClusterIP
+- apiVersion: v1
+  kind: Route
+  metadata:
+    labels:
+      app: cash-front
+    name: cash-front
+  spec:
+    port:
+      targetPort: 8080-tcp
+    to:
+      kind: Service
+      name: cash-front  
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: cash-front
+    name: cash-front
+  spec:
+    lookupPolicy:
+      local: false
