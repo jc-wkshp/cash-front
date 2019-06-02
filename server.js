@@ -58,7 +58,7 @@ var request = require('request')
     tracer.inject(span, FORMAT_HTTP_HEADERS, headers);
     request.get({
       headers: headers,
-      url:'http://cash-back:8080/payments'
+      url:'http://cash-back-inno-apps.apps.na311.openshift.opentlc.com/payments'
     }, function(err, response, body){
       if (err) return console.log(err)
       console.log('Respons Is -->' + response.statusCode)
@@ -79,7 +79,7 @@ var request = require('request')
     console.log(req.body)
     request.post({
       headers: headers,
-      url: 'http://cash-back:8080/payment',
+      url: 'http://cash-back-inno-apps.apps.na311.openshift.opentlc.com/payment',
       body: JSON.stringify(req.body)
     }, function(error, response, body){
       if (error) return console.log(err)
