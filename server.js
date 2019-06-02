@@ -23,7 +23,7 @@ const config = {
 
 const options = {
   tags: {
-    "cash-front.version": "1.0.0"
+    "cash-front.version": "1.1.0"
   }
 };
 
@@ -37,12 +37,11 @@ var request = require('request')
   app.use(bodyParser.urlencoded({extended: true}))
 
   app.listen(8080, function() {
-    console.log('listening on 8080')
+    console.log('App listening on 8080')
   })
 
   app.get('/', function (req, res) {
     span = tracer.startSpan("App-Status");
-    span.log({ foo: "bar" });
     console.log("do stuff...");
     res.send('Cash App Status [Running]')
     span.finish();
@@ -58,10 +57,10 @@ var request = require('request')
     tracer.inject(span, FORMAT_HTTP_HEADERS, headers);
     request.get({
       headers: headers,
-      url:'http://cash-back-inno-apps.apps.na311.openshift.opentlc.com/payments'
+      url:'http://cash-back:8080/payments'
     }, function(err, response, body){
       if (err) return console.log(err)
-      console.log('Respons Is -->' + response.statusCode)
+      console.log('Response Is -->' + response.statusCode)
       console.log(body)
       res.render('main.ejs', {payments: JSON.parse(body)})
     });
@@ -79,7 +78,7 @@ var request = require('request')
     console.log(req.body)
     request.post({
       headers: headers,
-      url: 'http://cash-back-inno-apps.apps.na311.openshift.opentlc.com/payment',
+      url: 'http://cash-back:8080/payment',
       body: JSON.stringify(req.body)
     }, function(error, response, body){
       if (error) return console.log(err)
@@ -102,7 +101,7 @@ var request = require('request')
       url:'http://cash-back:8080/generr'
     }, function(err, response, body){
       if (err) return console.log(err)
-      console.log('Respons Is -->' + response.statusCode)
+      console.log('Response Is -->' + response.statusCode)
       console.log(body)
     });
     span.finish();
