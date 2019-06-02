@@ -25,7 +25,7 @@ objects:
     output:
       to:
         kind: ImageStreamTag
-        name: frontend:latest
+        name: cash-front:latest
     triggers:
     - type: GitHub
       github:

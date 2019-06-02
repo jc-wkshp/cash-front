@@ -8,14 +8,15 @@ const initTracer = require("jaeger-client").initTracer;
 const app = express();
 
 const config = {
-  serviceName: "cash-front",
+  serviceName: "CashFront",
   reporter: {
     logSpans: true,
-    agentHost: "localhost",
-    agentPort: 6832
+    collectorEndpoint: "http://jaeger-collector-jaeger.apps.na311.openshift.opentlc.com/api/traces"
+    //agentHost: "localhost",
+    //agentPort: 6832
   },
   sampler: {
-    type: "probabilistic",
+    type: "const",
     param: 1.0
   }
 };
@@ -35,8 +36,8 @@ var request = require('request')
   app.use(express.static('web'));
   app.use(bodyParser.urlencoded({extended: true}))
 
-  app.listen(8081, function() {
-    console.log('listening on 8081')
+  app.listen(8080, function() {
+    console.log('listening on 8080')
   })
 
   app.get('/', function (req, res) {
@@ -57,7 +58,7 @@ var request = require('request')
     tracer.inject(span, FORMAT_HTTP_HEADERS, headers);
     request.get({
       headers: headers,
-      url:'http://localhost:8080/payments'
+      url:'http://cash-back:8080/payments'
     }, function(err, response, body){
       if (err) return console.log(err)
       console.log('Respons Is -->' + response.statusCode)
@@ -78,7 +79,7 @@ var request = require('request')
     console.log(req.body)
     request.post({
       headers: headers,
-      url: 'http://localhost:8080/payment',
+      url: 'http://cash-back:8080/payment',
       body: JSON.stringify(req.body)
     }, function(error, response, body){
       if (error) return console.log(err)
@@ -98,7 +99,7 @@ var request = require('request')
     tracer.inject(span, FORMAT_HTTP_HEADERS, headers);
     request.get({
       headers: headers,
-      url:'http://localhost:8080/generr'
+      url:'http://cash-back:8080/generr'
     }, function(err, response, body){
       if (err) return console.log(err)
       console.log('Respons Is -->' + response.statusCode)
